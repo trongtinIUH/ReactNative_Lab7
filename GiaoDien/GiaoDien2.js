@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useState, useContext } from 'react'; 
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useFocusEffect } from '@react-navigation/native'; // Thêm import
+import MyContext from './MyContext';
 
 export default function GiaoDien2({navigation}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const { name } = useContext(MyContext); // Lấy giá trị name từ context
 
   // Sử dụng useFocusEffect để gọi lại dữ liệu khi màn hình này được hiển thị
   useFocusEffect(
@@ -78,6 +80,21 @@ export default function GiaoDien2({navigation}) {
     .catch(error => console.error('Error updating task:', error));
   };
 
+  // hàm xóa
+  const handleDeleteTask = (taskID) => {
+    fetch(`https://66f606b5436827ced975b8c7.mockapi.io/bai7/${taskID}`, {
+      method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(() => {
+      // Xóa task khỏi state sau khi xóa thành công
+      const updatedTasks = tasks.filter(task => task.id !== taskID);
+      setTasks(updatedTasks);
+      setFilteredTasks(updatedTasks);
+    })
+    .catch(error => console.error('Error deleting task:', error));
+  };
+
   const handleEditTask = (task) => {
     navigation.navigate('GiaoDien3', { task });
   };
@@ -94,7 +111,7 @@ export default function GiaoDien2({navigation}) {
             style={styles.profileImage}
           />
           <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText}>Go Yoon Jung</Text>
+            <Text style={styles.headerText}>{name}</Text>
             <Text style={styles.subText}>Have a great day ahead</Text>
           </View>
         </View>
@@ -124,6 +141,9 @@ export default function GiaoDien2({navigation}) {
               <Text style={styles.taskText}>{task.title}</Text>
               <TouchableOpacity onPress={() => handleEditTask(task)}>  
                 <Icon name="edit" size={24} color="red"/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleDeleteTask(task.id)}>  
+                <Icon name="delete" size={24} color="blue"/>
               </TouchableOpacity>
             </View>
           ))} 

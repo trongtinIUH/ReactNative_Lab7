@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState, useContext } from 'react'; 
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MyContext from './MyContext';
 
 export default function GiaoDien3({ route, navigation }) {
+    const { name } = useContext(MyContext); // Lấy giá trị name từ context
+
     const { task } = route.params || {}; // Thêm kiểm tra an toàn
     const [inputTitle, setInputTitle] = useState(task ? task.title : ''); // Khởi tạo giá trị ô nhập
 
@@ -39,7 +42,7 @@ export default function GiaoDien3({ route, navigation }) {
                         style={styles.profileImage}
                     />
                     <View style={styles.headerTextContainer}>
-                        <Text style={styles.headerText}>Go Yoon Jung</Text>
+                        <Text style={styles.headerText}>{name}</Text>
                         <Text style={styles.subText}>Have a great day ahead</Text>
                     </View>
                 </View>
